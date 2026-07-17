@@ -242,73 +242,96 @@ const DashBoard = () => {
           </button>
         </div>
         <hr className="border-slate-300 my-6 sm:w-[305px]" />
-        <div className="grid grid-cols-2 sm:flex flex-wrap gap-4">
-          {isLoading ? (
-            <div className="flex justify-center items-center gap-2 text-slate-500">
-              <LoaderCircleIcon className="animate-spin size-6" />
-              Loading resumes...
-            </div>
-          ) : (
-            allResumes?.filter(Boolean).map((resume, index) => {
-              const baseColor = colors[index % colors.length];
-
-              return (
-                <button
-                  onClick={() => navigate(`/app/builder/${resume._id}`)}
-                  key={resume._id}
-                  className="relative w-full sm:max-w-36 h-48 flex flex-col justify-center items-center rounded-lg gap-2 text-slate-600 border group hover:shadow-lg transition-all duration-300 cursor-pointer"
-                  style={{
-                    background: `linear-gradient(135deg,${baseColor}10,${baseColor}40)`,
-                    borderColor: baseColor + "40",
-                  }}
-                >
-                  <FilePenLineIcon
-                    className="size-7 group-hover:scale-105 transition-all"
-                    style={{ color: baseColor }}
-                  />
-
-                  <p
-                    className="text-sm group-hover:scale-105 transition-all px-2 text-center"
-                    style={{ color: baseColor }}
-                  >
-                    {resume?.title}
-                  </p>
-
-                  <div
-                    onClick={(e) => e.stopPropagation()}
-                    className="absolute top-1 right-1 group-hover:flex items-center hidden"
-                  >
-                    <TrashIcon
-                      onClick={() => deleteResume(resume._id)}
-                      className="size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors"
-                    />
-
-                    <PencilIcon
-                      onClick={() => {
-                        setEditResumeId(resume._id);
-                        setTitle(resume.title);
-                      }}
-                      className="size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors"
-                    />
-                  </div>
-                </button>
-              );
-            })
-          )}
-        </div>
-
-        <hr className="border-slate-300 my-8" />
-
-        <h2 className="text-xl font-semibold mb-4">AI Interview Reports</h2>
-
+        <h2 className="text-xl font-semibold mb-4">Generated Resumes</h2>
        <div className="grid grid-cols-2 sm:flex flex-wrap gap-4">
   {isLoading ? (
-    <div className="flex justify-center items-center gap-2 text-slate-500">
+    <div className="flex justify-center items-center gap-2 text-slate-500 w-full py-10">
+      <LoaderCircleIcon className="animate-spin size-6" />
+      Loading resumes...
+    </div>
+  ) : allResumes.filter(Boolean).length === 0 ? (
+    <div className="w-full flex flex-col items-center justify-center py-12 border border-dashed border-slate-300 rounded-lg text-slate-500">
+      <FilePenLineIcon className="size-12 mb-3 text-slate-400" />
+
+      <h3 className="text-lg font-semibold">
+        No Resumes Generated Yet
+      </h3>
+
+      <p className="text-sm text-slate-400 mt-1 text-center">
+        Create a new resume or upload an existing resume to get started.
+      </p>
+    </div>
+  ) : (
+    allResumes.filter(Boolean).map((resume, index) => {
+      const baseColor = colors[index % colors.length];
+
+      return (
+        <button
+          onClick={() => navigate(`/app/builder/${resume._id}`)}
+          key={resume._id}
+          className="relative w-full sm:max-w-36 h-48 flex flex-col justify-center items-center rounded-lg gap-2 text-slate-600 border group hover:shadow-lg transition-all duration-300 cursor-pointer"
+          style={{
+            background: `linear-gradient(135deg, ${baseColor}10, ${baseColor}40)`,
+            borderColor: `${baseColor}40`,
+          }}
+        >
+          <FilePenLineIcon
+            className="size-7 group-hover:scale-105 transition-all"
+            style={{ color: baseColor }}
+          />
+
+          <p
+            className="text-sm group-hover:scale-105 transition-all px-2 text-center"
+            style={{ color: baseColor }}
+          >
+            {resume.title}
+          </p>
+
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="absolute top-1 right-1 hidden group-hover:flex items-center"
+          >
+            <TrashIcon
+              onClick={() => deleteResume(resume._id)}
+              className="size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors"
+            />
+
+            <PencilIcon
+              onClick={() => {
+                setEditResumeId(resume._id);
+                setTitle(resume.title);
+              }}
+              className="size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors"
+            />
+          </div>
+        </button>
+      );
+    })
+  )}
+</div>
+
+        <hr className="border-slate-300 my-8" />
+<h2 className="text-xl font-semibold mb-4">AI Interview Reports</h2>
+
+<div className="grid grid-cols-2 sm:flex flex-wrap gap-4">
+  {isLoading ? (
+    <div className="flex justify-center items-center gap-2 text-slate-500 w-full py-10">
       <LoaderCircleIcon className="animate-spin size-6" />
       Loading reports...
     </div>
+  ) : aiReports.length === 0 ? (
+    <div className="w-full flex flex-col items-center justify-center py-12 border border-dashed border-slate-300 rounded-lg text-slate-500">
+      <FilePenLineIcon className="size-12 mb-3 text-slate-400" />
+      <h3 className="text-lg font-semibold">
+        No Interview Reports Generated Yet
+      </h3>
+      <p className="text-sm text-slate-400 mt-1 text-center">
+        Analyze your resume against a job description to generate your first AI
+        interview report.
+      </p>
+    </div>
   ) : (
-    aiReports?.map((report, index) => {
+    aiReports.map((report, index) => {
       const baseColor = colors[index % colors.length];
 
       return (
@@ -317,8 +340,8 @@ const DashBoard = () => {
           onClick={() => navigate(`/app/interview-report/${report._id}`)}
           className="relative w-full sm:max-w-36 h-48 flex flex-col justify-center items-center rounded-lg gap-2 text-slate-600 border group hover:shadow-lg transition-all duration-300 cursor-pointer"
           style={{
-            background: `linear-gradient(135deg,${baseColor}10,${baseColor}40)`,
-            borderColor: baseColor + "40",
+            background: `linear-gradient(135deg, ${baseColor}10, ${baseColor}40)`,
+            borderColor: `${baseColor}40`,
           }}
         >
           <FilePenLineIcon
@@ -334,15 +357,15 @@ const DashBoard = () => {
           </p>
 
           <p
-            className="text-[11px] text-slate-500"
-            style={{ color: baseColor + "90" }}
+            className="text-[11px]"
+            style={{ color: `${baseColor}90` }}
           >
             {new Date(report.createdAt).toLocaleDateString()}
           </p>
 
           <div
             onClick={(e) => e.stopPropagation()}
-            className="absolute top-1 right-1 group-hover:flex items-center hidden"
+            className="absolute top-1 right-1 hidden group-hover:flex items-center"
           >
             <TrashIcon
               onClick={() => deleteReport(report._id)}
